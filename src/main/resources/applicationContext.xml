@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-2.5.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd" default-lazy-init="true">
+
+   <!-- 自动扫描与装配bean -->
+	<context:component-scan base-package="com.xabaohui.modules.distr.interf"></context:component-scan>
+
+
+	<bean id="dataSource"
+		class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName"
+			value="com.mysql.jdbc.Driver">
+		</property>
+		<property name="url" value="jdbc:mysql://localhost:3306/zis"></property>
+		<property name="username" value="root"></property>
+		<property name="password" value="root"></property>
+	</bean>
+	
+	<!-- 测试专用-->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">
+					org.hibernate.dialect.MySQLDialect
+				</prop>
+			</props>
+		</property>
+		<property name="mappingResources">
+			<list>
+				<value>com/xabaohui/modules/distr/bean/DistrOrderRelation.hbm.xml</value>
+				<value>com/xabaohui/modules/distr/bean/DistrChange.hbm.xml</value>
+				<value>com/xabaohui/modules/distr/bean/DistrBatch.hbm.xml</value>
+				<value>com/xabaohui/modules/distr/bean/DistrOrder.hbm.xml</value>
+				<value>com/xabaohui/modules/distr/bean/DistrOrderDetail.hbm.xml</value></list>
+		</property></bean>
+	<bean id="DistrOrderRelationDao"
+		class="com.xabaohui.modules.distr.daoImpl.DistrOrderRelationDaoImpl">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+	</bean>
+	<bean id="DistrChangeDao" class="com.xabaohui.modules.distr.daoImpl.DistrChangeDaoImpl">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+	</bean>
+	<bean id="DistrBatchDao" class="com.xabaohui.modules.distr.daoImpl.DistrBatchDaoImpl">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+	</bean>
+	<bean id="DistrOrderDao" class="com.xabaohui.modules.distr.daoImpl.DistrOrderDaoImpl">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+	</bean>
+	<bean id="DistrOrderDetailDao"
+		class="com.xabaohui.modules.distr.daoImpl.DistrOrderDetailDaoImpl">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+	</bean>
+	
+	<bean id="DistrService" class="com.xabaohui.modules.distr.service.DistrService">
+		<property name="distrBatchDao" ref="DistrBatchDao"></property>
+		<property name="distrOrderDao" ref="DistrOrderDao"></property>
+		<property name="distrChangeDao" ref="DistrChangeDao"></property>
+		<property name="distrOrderDetailDao" ref="DistrOrderDetailDao"></property>
+		<property name="distrOrderRelationDao" ref="DistrOrderRelationDao"></property>
+	</bean>
+	
+	</beans>
